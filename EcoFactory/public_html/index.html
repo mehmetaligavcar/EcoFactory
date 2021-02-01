@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="js/jquery-3.5.1.min.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <style>
+	#blocker {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        #instructions {
+            width: 100%;
+            height: 100%;
+            display: -webkit-box;
+            display: -moz-box;
+            display: box;
+            -webkit-box-orient: horizontal;
+            -moz-box-orient: horizontal;
+            box-orient: horizontal;
+
+            -webkit-box-pack: center;
+            -moz-box-pack: center;
+            box-pack: center;
+            -webkit-box-align: center;
+            -moz-box-align: center;
+            box-align: center;
+
+            color: #ffffff;
+            text-align: center;
+            font-family: Arial;
+            font-size: 14px;
+            line-height: 24px;
+
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <script id="dotfrag" type="x-shader/x-fragment">
+        precision mediump float;
+
+        uniform float elapsedTime;
+        uniform sampler2D textureSampler;
+
+        varying vec4 color;
+        varying vec2 texCoord;
+
+        void main(void) 
+        {
+            vec4 tex = texture2D(textureSampler, vec2(texCoord.s, texCoord.t));
+            gl_FragColor = abs(sin(vec4(tex.xyz + color.xyz + elapsedTime, 1.0)));
+        }
+    </script>
+    
+    <script id="dotvert" type="x-shader/x-vertex">
+        precision mediump float;
+
+        attribute vec3 vertexPosition;
+        attribute vec4 vertexColor;
+        attribute vec2 textureCoord;
+
+        uniform float elapsedTime;
+
+        uniform mat4 mvMatrix;
+        uniform mat4 pMatrix;
+
+        varying vec4 color;
+        varying vec2 texCoord;
+
+        void main(void) 
+        {
+            gl_Position = pMatrix * mvMatrix * vec4(vertexPosition * (1.0 + abs(sin(elapsedTime))), 1.0);
+            color = vertexColor;
+            texCoord = textureCoord;
+        }
+    </script>
+    <script id="gouraudfrag" type="x-shader/x-fragment" src="js/gouraudfrag.js"></script>
+    <script id="gourandvert" type="x-shader/x-vertex" src="js/gouraudvert.js"></script>
+    <div id="blocker">
+        <div id="instructions">
+            <span style="font-size:36px">Click to play</span>
+            <br /><br />
+                Move: WASD<br/>
+                Jump: SPACE<br/>
+                Look: MOUSE<br/>
+                Run: SHIFT<br/>
+                Tilt: Q/E<br/>
+                Take: F<br/>
+                Sorting: Y<br/>
+                Lamp: T<br/>
+                Flash Light: V<br/>
+                Shaders: 1/2/3/4<br/>
+                Doors: Z/X
+	</div>
+    </div>
+    <canvas id="c" width="1280" height="720" style="border:1px solid"></canvas>
+</body>
+</html>
